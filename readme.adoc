@@ -86,6 +86,8 @@ By default, the app will not work with self-signed certificate due to security r
 [source, bash]
 ----
 openssl s_client -showcerts -connect host:port
+wget https://api-server-myproject.192.168.42.191.nip.io --ca-certificate=mycertfile.pem
+
 ---- 
 +
 It will print out the full certificate chain of the server and you should save the content of the root certificate into a file.

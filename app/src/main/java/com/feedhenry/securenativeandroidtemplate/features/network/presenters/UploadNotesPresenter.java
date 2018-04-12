@@ -12,8 +12,16 @@ import com.feedhenry.securenativeandroidtemplate.domain.repositories.NoteReposit
 import com.feedhenry.securenativeandroidtemplate.features.network.views.UploadNotesView;
 import com.feedhenry.securenativeandroidtemplate.mvp.components.HttpHelper;
 import com.feedhenry.securenativeandroidtemplate.mvp.presenters.BasePresenter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.aerogear.mobile.auth.AuthService;
 import org.aerogear.mobile.auth.user.UserPrincipal;
+import org.aerogear.mobile.core.MobileCore;
+import org.aerogear.mobile.core.executor.AppExecutors;
+import org.aerogear.mobile.core.http.HttpRequest;
+import org.aerogear.mobile.core.http.HttpResponse;
+
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +51,9 @@ public class UploadNotesPresenter extends BasePresenter<UploadNotesView> {
 
     @Inject
     AuthService authService;
+
+    @Inject
+    MobileCore mobileCore;      // TODO: constructor inject or field inject?
 
     @Inject
     public UploadNotesPresenter(NoteRepository noteRepos, AppConfiguration appConfiguration){
@@ -136,6 +147,27 @@ public class UploadNotesPresenter extends BasePresenter<UploadNotesView> {
         @Override
         protected Long doInBackground(Void... voids) {
             String apiUrl = apiServerConfiguration.getNoteAPIUrl();
+
+//            mobileCore.getHttpLayer().
+//
+//            HttpRequest httpRequest = mobileCore.getHttpLayer().newRequest();
+//            httpRequest.get("https://jsonplaceholder.typicode.com/users");
+//            HttpResponse httpResponse = httpRequest.execute();
+//            httpResponse.onError(() -> {
+//                Log.e(TAG, httpResponse.getError().toString());
+//            });
+//            httpResponse.onSuccess(() -> {
+//                String jsonResponse = httpResponse.stringBody();
+//                new AppExecutors().mainThread().execute(() -> {
+//
+//                    List<User> retrievesUsers = new Gson().fromJson(jsonResponse,
+//                            new TypeToken<List<User>>() {}.getType());
+//
+//                    activity.mobileCore.getLogger().info("Users: " + retrievesUsers.size());
+//
+//                    users.addAll(retrievesUsers);
+//                });
+//            });
 
             UserPrincipal user = authService.currentUser();
             long uploaded = 0;
