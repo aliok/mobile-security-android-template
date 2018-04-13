@@ -181,7 +181,7 @@ public class UploadNotesPresenter extends BasePresenter<UploadNotesView> {
                     X509TrustManager trustManager = TrustKit.getInstance().getTrustManager(hostname);
 
                     OkHttpClient httpClient = HttpHelper.getHttpClient()
-                            .sslSocketFactory(sslSocketFactory, trustManager)
+                             .sslSocketFactory(sslSocketFactory, trustManager)
                             .connectTimeout(10, TimeUnit.SECONDS)
                             .build();
 
@@ -194,6 +194,7 @@ public class UploadNotesPresenter extends BasePresenter<UploadNotesView> {
                         }
                         Note readNote = noteRepository.readNote(note.getId());
                         RequestBody requestBody = RequestBody.create(JSON, readNote.toJson(true).toString());
+                        Log.e(TAG, accessToken);
                         Request request = new Request.Builder()
                                 .url(url)
                                 .post(requestBody)
@@ -205,6 +206,7 @@ public class UploadNotesPresenter extends BasePresenter<UploadNotesView> {
                         if (res.isSuccessful()) {
                             uploaded++;
                         } else {
+                            Log.e(TAG, "FUCK YOU " + res.body().string());
                             this.error = new Exception(res.body().string());
                         }
                     }

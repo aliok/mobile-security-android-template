@@ -8,20 +8,20 @@
       "id": "keycloak",
       "name": "keycloak",
       "type": "keycloak",
-      "url": "https://keycloak.security.feedhenry.org",
+      "url": "https://keycloak-project2.192.168.42.191.nip.io",
       "config": {
         "auth-server-url": "https://keycloak-project2.192.168.42.191.nip.io/auth",
         "realm": "project2",
         "resource": "client-app",
         "ssl-required": "external",
-        "uri": "https://keycloak-project2.192.168.42.191.nip.io/auth"
+        "url": "https://keycloak-project2.192.168.42.191.nip.io/auth"
       }
     },
     {
       "id": "custom-runtime-connector",
       "name": "notes-service",
       "type": "Custom Runtime Connector",
-      "url": "https://api-server-myproject.192.168.42.191.nip.io",
+      "url": "https://api-server-project2.192.168.42.191.nip.io",
       "config": {}
     }
   ]
