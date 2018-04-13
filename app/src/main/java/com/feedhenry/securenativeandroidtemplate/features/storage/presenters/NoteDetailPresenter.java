@@ -40,6 +40,23 @@ public class NoteDetailPresenter extends BasePresenter<NoteDetailAppView> {
                 view.showMessage(R.string.error_failed_save_note);
             }
         });
+        for (int i = 0; i < 100; i++) {
+            this.noteCrudlService.createNote(new Note("aa" + i, "bb" + i), storeType, new CallbackHandler<Note>() {
+                @Override
+                public void onSuccess(Note note) {
+//                    view.hideLoading();
+//                    view.showMessage(R.string.info_note_saved);
+//                    view.onNoteSaved(note);
+                }
+
+                @Override
+                public void onError(Throwable error) {
+//                    view.hideLoading();
+//                    view.showMessage(R.string.error_failed_save_note);
+                }
+            });
+
+        }
     }
 
     public void loadNoteWithId(String noteId, int storeType) {

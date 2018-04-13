@@ -2,7 +2,7 @@ package com.feedhenry.securenativeandroidtemplate.features.network.presenters;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import com.datatheorem.android.trustkit.TrustKit;
+
 import com.feedhenry.securenativeandroidtemplate.R;
 import com.feedhenry.securenativeandroidtemplate.domain.Constants;
 import com.feedhenry.securenativeandroidtemplate.domain.configurations.ApiServerConfiguration;
@@ -10,29 +10,21 @@ import com.feedhenry.securenativeandroidtemplate.domain.configurations.AppConfig
 import com.feedhenry.securenativeandroidtemplate.domain.models.Note;
 import com.feedhenry.securenativeandroidtemplate.domain.repositories.NoteRepository;
 import com.feedhenry.securenativeandroidtemplate.features.network.views.UploadNotesView;
-import com.feedhenry.securenativeandroidtemplate.mvp.components.HttpHelper;
 import com.feedhenry.securenativeandroidtemplate.mvp.presenters.BasePresenter;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import org.aerogear.mobile.auth.AuthService;
 import org.aerogear.mobile.auth.user.UserPrincipal;
 import org.aerogear.mobile.core.MobileCore;
-import org.aerogear.mobile.core.executor.AppExecutors;
 import org.aerogear.mobile.core.http.HttpRequest;
 import org.aerogear.mobile.core.http.HttpResponse;
 
-import java.net.URL;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
 import javax.inject.Inject;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.X509TrustManager;
+
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by weili on 27/10/2017.
@@ -134,6 +126,7 @@ public class UploadNotesPresenter extends BasePresenter<UploadNotesView> {
 
     private class UploadNotesTask extends AsyncTask<Void, Long, Long> {
 
+        private AtomicInteger uploaded = new AtomicInteger(0);
         private Exception error;
 
         @Override
@@ -148,74 +141,42 @@ public class UploadNotesPresenter extends BasePresenter<UploadNotesView> {
         protected Long doInBackground(Void... voids) {
             String apiUrl = apiServerConfiguration.getNoteAPIUrl();
 
-//            mobileCore.getHttpLayer().
-//
-//            HttpRequest httpRequest = mobileCore.getHttpLayer().newRequest();
-//            httpRequest.get("https://jsonplaceholder.typicode.com/users");
-//            HttpResponse httpResponse = httpRequest.execute();
-//            httpResponse.onError(() -> {
-//                Log.e(TAG, httpResponse.getError().toString());
-//            });
-//            httpResponse.onSuccess(() -> {
-//                String jsonResponse = httpResponse.stringBody();
-//                new AppExecutors().mainThread().execute(() -> {
-//
-//                    List<User> retrievesUsers = new Gson().fromJson(jsonResponse,
-//                            new TypeToken<List<User>>() {}.getType());
-//
-//                    activity.mobileCore.getLogger().info("Users: " + retrievesUsers.size());
-//
-//                    users.addAll(retrievesUsers);
-//                });
-//            });
-
             UserPrincipal user = authService.currentUser();
-            long uploaded = 0;
             if (user != null ) {
                 String accessToken = user.getAccessToken();
                 try {
-                    URL url = new URL(apiUrl);
-                    String hostname = url.getHost();
-
-                    SSLSocketFactory sslSocketFactory = TrustKit.getInstance().getSSLSocketFactory(hostname);
-                    X509TrustManager trustManager = TrustKit.getInstance().getTrustManager(hostname);
-
-                    OkHttpClient httpClient = HttpHelper.getHttpClient()
-                             .sslSocketFactory(sslSocketFactory, trustManager)
-                            .connectTimeout(10, TimeUnit.SECONDS)
-                            .build();
-
                     List<Note> notes = noteRepository.listNotes();
                     long totalNumber = notes.size();
-                    long currentCount = 0;
+                    final AtomicLong currentCount = new AtomicLong(0);
                     for (Note note : notes) {
                         if (isCancelled() || this.error != null) {
                             break;
                         }
                         Note readNote = noteRepository.readNote(note.getId());
-                        RequestBody requestBody = RequestBody.create(JSON, readNote.toJson(true).toString());
-                        Log.e(TAG, accessToken);
-                        Request request = new Request.Builder()
-                                .url(url)
-                                .post(requestBody)
-                                .addHeader("Authorization", String.format("Bearer %s", accessToken))
-                                .build();
-                        Response res = httpClient.newCall(request).execute();
-                        currentCount++;
-                        publishProgress(currentCount, totalNumber);
-                        if (res.isSuccessful()) {
-                            uploaded++;
-                        } else {
-                            Log.e(TAG, "FUCK YOU " + res.body().string());
-                            this.error = new Exception(res.body().string());
-                        }
+                        HttpRequest httpRequest = mobileCore.getHttpLayer().newRequest();
+                        httpRequest.addHeader("Authorization", String.format("Bearer %s", accessToken));
+                        httpRequest.post(apiUrl, readNote.toJson(true).toString().getBytes("UTF-8"));
+                        HttpResponse httpResponse = httpRequest.execute();
+
+                        httpResponse.onError(() -> {
+                            UploadNotesTask.this.error = new Exception(httpResponse.stringBody());
+                        });
+                        httpResponse.onSuccess(() -> {
+                            uploaded.incrementAndGet();
+                        });
+                        httpResponse.onComplete(() -> {
+                            long progress = currentCount.incrementAndGet();
+                            publishProgress(progress, totalNumber);
+                        });
+
+                        httpResponse.waitForCompletionAndClose();
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "Error - Exception", e);
                     this.error = e;
                 }
             }
-            return uploaded;
+            return uploaded.longValue();
         }
         // end::invokeAPI[]
 
