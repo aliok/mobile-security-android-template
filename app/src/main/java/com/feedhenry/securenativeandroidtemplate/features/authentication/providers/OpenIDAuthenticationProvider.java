@@ -1,7 +1,7 @@
 package com.feedhenry.securenativeandroidtemplate.features.authentication.providers;
 import android.app.Activity;
 import com.feedhenry.securenativeandroidtemplate.domain.callbacks.CallbackHandler;
-import org.aerogear.mobile.auth.Callback;
+import org.aerogear.mobile.core.Callback;
 
 
 /**

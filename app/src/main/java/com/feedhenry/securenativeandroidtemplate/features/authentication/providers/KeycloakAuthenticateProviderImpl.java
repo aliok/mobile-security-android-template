@@ -7,7 +7,7 @@ import android.util.Log;
 import com.feedhenry.securenativeandroidtemplate.R;
 import com.feedhenry.securenativeandroidtemplate.domain.callbacks.CallbackHandler;
 import org.aerogear.mobile.auth.AuthService;
-import org.aerogear.mobile.auth.Callback;
+import org.aerogear.mobile.core.Callback;
 import org.aerogear.mobile.auth.authenticator.DefaultAuthenticateOptions;
 import org.aerogear.mobile.auth.user.UserPrincipal;
 import javax.inject.Inject;

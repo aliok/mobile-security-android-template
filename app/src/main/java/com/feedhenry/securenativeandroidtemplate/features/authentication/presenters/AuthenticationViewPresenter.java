@@ -4,7 +4,7 @@ import com.feedhenry.securenativeandroidtemplate.MainActivity;
 import com.feedhenry.securenativeandroidtemplate.features.authentication.providers.OpenIDAuthenticationProvider;
 import com.feedhenry.securenativeandroidtemplate.features.authentication.views.AuthenticationView;
 import com.feedhenry.securenativeandroidtemplate.mvp.presenters.BasePresenter;
-import org.aerogear.mobile.auth.Callback;
+import org.aerogear.mobile.core.Callback;
 import org.aerogear.mobile.auth.user.UserPrincipal;
 import javax.inject.Inject;
 
