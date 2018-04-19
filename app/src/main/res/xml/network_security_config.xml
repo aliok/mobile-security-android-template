@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="false">
-        <domain includeSubdomains="true">security.feedhenry.org</domain>
+        <domain includeSubdomains="true">192.168.42.103.nip.io</domain>
         <pin-set>
             // primary
             <pin digest="SHA-256">trENjoQnbWupnAtu1/WagBE0RgJ+p7ke2ppWML8vAl0=</pin>
@@ -10,6 +10,9 @@
         </pin-set>
         // Set this to true for production, at least 2 unique pins must be provided above!
         <trustkit-config enforcePinning="true"></trustkit-config>
+        <trust-anchors>
+            <certificates src="@raw/ca" overridePins="true"/>
+        </trust-anchors>
     </domain-config>
     <debug-overrides>
         <trust-anchors>

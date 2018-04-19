@@ -1,14 +1,14 @@
 {
   "version": 1,
-  "clusterName": "https://192.168.37.1:8443",
-  "namespace": "myproject",
-  "clientId": "app-android",
+  "clusterName": "https://192.168.42.103:8443",
+  "namespace": "aaa",
+  "clientId": "myapp-android",
   "services": [
     {
       "id": "custom-runtime-connector",
       "name": "notes-service",
       "type": "Custom Runtime Connector",
-      "url": "https://api.security.feedhenry.org",
+      "url": "https://api-server-aaa.192.168.42.103.nip.io",
       "config": {
       }
     },
@@ -16,13 +16,13 @@
       "id": "keycloak",
       "name": "keycloak",
       "type": "keycloak",
-      "url": "https://keycloak.security.feedhenry.org",
+      "url": "https://keycloak-aaa.192.168.42.103.nip.io",
       "config": {
-        "auth-server-url": "https://keycloak.security.feedhenry.org/auth",
-        "realm": "secure-app",
-        "resource": "client-app",
+        "auth-server-url": "https://keycloak-aaa.192.168.42.103.nip.io/auth",
+        "realm": "aaa",
+        "resource": "wKDNCoGAUdQXHQPDNIdU",
         "ssl-required": "external",
-        "url": "https://keycloak.security.feedhenry.org/auth"
+        "url": "https://keycloak-aaa.192.168.42.103.nip.io/auth"
       }
     }
   ]
